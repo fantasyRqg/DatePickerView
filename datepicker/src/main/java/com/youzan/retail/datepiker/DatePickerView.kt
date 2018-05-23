@@ -8,7 +8,6 @@ import android.graphics.Paint
 import android.graphics.Typeface
 import android.os.Build
 import android.util.AttributeSet
-import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
@@ -56,7 +55,7 @@ class DatePickerView : View {
     private var mDividerColor = Color.GRAY
 
     private var mTextSize = 30f
-    private var mLineMargin = 10
+    private var mLineMargin = 10f
     private var mDividerHeight = 1f
 
     private var mMonthTitleFormat = "%d年%d月"
@@ -87,7 +86,6 @@ class DatePickerView : View {
         }
 
         override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
-            Log.d(TAG, "onFling() called with: e1 = [  ], e2 = [  ], velocityX = [ ${velocityX} ], velocityY = [ ${velocityY} ]")
             mScroller.fling(0,
                     mScrolled.toInt(),
                     0,
@@ -111,8 +109,24 @@ class DatePickerView : View {
     constructor(context: Context?) : this(context, null)
     constructor(context: Context?, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+        val typedArray = context!!.obtainStyledAttributes(attrs, R.styleable.DatePickerView)
 
+        mHighlightColor = typedArray.getColor(R.styleable.DatePickerView_highlightColor, mHighlightColor)
+        mRangeColor = typedArray.getColor(R.styleable.DatePickerView_rangeColor, mRangeColor)
+        mNormalColor = typedArray.getColor(R.styleable.DatePickerView_normalColor, mNormalColor)
+        mInverseColor = typedArray.getColor(R.styleable.DatePickerView_inverseColor, mInverseColor)
+        mDividerColor = typedArray.getColor(R.styleable.DatePickerView_dividerColor, mDividerColor)
 
+        mTextSize = typedArray.getDimensionPixelSize(R.styleable.DatePickerView_textSize, mTextSize.toInt()).toFloat()
+        mLineMargin = typedArray.getDimensionPixelSize(R.styleable.DatePickerView_lineMargin, mLineMargin.toInt()).toFloat()
+        mDividerHeight = typedArray.getDimensionPixelSize(R.styleable.DatePickerView_dividerHeight, mDividerHeight.toInt()).toFloat()
+
+        typedArray.recycle()
+
+        initPaint()
+    }
+
+    private fun initPaint() {
         mHPaint.color = mHighlightColor
         mRPaint.color = mRangeColor
         mNPaint.color = mNormalColor
@@ -144,7 +158,7 @@ class DatePickerView : View {
         mMonth = mCalendar.get(Calendar.MONTH)
     }
 
-    fun setLineMargin(margin: Int) {
+    fun setLineMargin(margin: Float) {
         mLineMargin = margin
     }
 
@@ -218,7 +232,6 @@ class DatePickerView : View {
     }
 
 
-    val TAG = "DatePickerView"
     private fun drawAllMonth(startY: Float, offset: Float, canvas: Canvas) {
         var cy = mYear
         var cm = mMonth

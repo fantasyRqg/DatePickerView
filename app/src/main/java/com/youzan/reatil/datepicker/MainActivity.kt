@@ -12,7 +12,7 @@ class MainActivity : Activity() {
         setContentView(R.layout.activity_main)
         val calendar = Calendar.getInstance(Locale.getDefault())
         date_picker.setDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH))
-        date_picker.setDate(2018, 5)
-        date_picker.setLineMargin(10)
+//        date_picker.setDate(2018, 5)
+//        date_picker.setLineMargin(10f)
     }
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DatePickerView">
+        <attr name="highlightColor" format="color" />
+        <attr name="rangeColor" format="color" />
+        <attr name="normalColor" format="color" />
+        <attr name="inverseColor" format="color" />
+        <attr name="dividerColor" format="color" />
+
+        <attr name="textSize" format="dimension" />
+        <attr name="lineMargin" format="dimension" />
+        <attr name="dividerHeight" format="dimension" />
+
+    </declare-styleable>
+</resources>
