@@ -87,13 +87,14 @@ class DatePickerView : View {
         }
 
         override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
+            Log.d(TAG, "onFling() called with: e1 = [  ], e2 = [  ], velocityX = [ ${velocityX} ], velocityY = [ ${velocityY} ]")
             mScroller.fling(0,
                     mScrolled.toInt(),
                     0,
                     -velocityY.toInt(),
                     0, 0,
-                    -measuredHeight,
-                    measuredHeight
+                    mScrolled.toInt() - measuredHeight * 4,
+                    mScrolled.toInt() + measuredHeight * 4
             )
             postInvalidate()
             return true
@@ -183,8 +184,8 @@ class DatePickerView : View {
 
     private fun calcMonthHeight(year: Int, month: Int): Triple<Int, Int, Float> {
         val cal = mCalendar
-        cal.set(Calendar.YEAR, mYear)
-        cal.set(Calendar.MONTH, mMonth)
+        cal.set(Calendar.YEAR, year)
+        cal.set(Calendar.MONTH, month)
         cal.set(Calendar.DAY_OF_MONTH, 1)
         val daysOfMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH)
         val firstDayWeek = cal.get(Calendar.DAY_OF_WEEK) - 1
@@ -203,7 +204,7 @@ class DatePickerView : View {
                 mSideWidth +                                        // month title height
                 mDividerHeight                                      //end divider height
 
-        return Triple(daysOfMonth, firstDayWeek, height)
+        return Triple(firstDayWeek, daysOfMonth, height)
     }
 
     private fun drawContent(startY: Float, canvas: Canvas) {
@@ -217,37 +218,40 @@ class DatePickerView : View {
     }
 
 
+    val TAG = "DatePickerView"
     private fun drawAllMonth(startY: Float, offset: Float, canvas: Canvas) {
-        Log.d("test", "drawAllMonth() called with: startY = [ ${startY} ], offset = [ ${offset} ], canvas = [  ]")
-
         var cy = mYear
         var cm = mMonth
 
         var startOffset = 0f
-        var pos = offset + startY
 
         //find first show month
-        if (offset > 0) {
+        if (offset >= 0) {
             // original month below startY
-            while (pos < startY) {
+            var pos = offset
+
+
+            while (pos > 0) {
                 cm--
                 if (cm < 0) {
                     cy--
                     cm = 11
                 }
                 val (_, _, mh) = calcMonthHeight(cy, cm)
-                pos += mh
+                pos -= mh
             }
-
             startOffset = pos
 
         } else {
             // original month above or on startY
+            var pos = offset
 
-            while (pos > startY) {
+            while (pos < 0) {
                 startOffset = pos
                 val (_, _, mh) = calcMonthHeight(cy, cm)
                 pos += mh
+
+                if (pos >= 0) break
 
                 cm++
                 if (cm > 11) {
@@ -257,15 +261,17 @@ class DatePickerView : View {
             }
         }
 
-
         var ssy = startY + startOffset
 
         while (ssy < measuredHeight) {
+
             ssy += drawMonthTitle(ssy, canvas, cy, cm)
             ssy += drawDivider(ssy, canvas)
             val (firstDayWeek, daysOfMonth, mh) = calcMonthHeight(cy, cm)
             drawDays(ssy, canvas, firstDayWeek, daysOfMonth)
-            ssy += mh
+
+            ssy += mh - mSideWidth - mDividerHeight * 2
+
             ssy += drawDivider(ssy, canvas)
 
             cm++
@@ -278,8 +284,7 @@ class DatePickerView : View {
     }
 
     private fun drawMonthTitle(startY: Float, canvas: Canvas, year: Int, month: Int): Float {
-        Log.d("test", "drawMonthTitle() called with: startY = [ ${startY} ], canvas = [  ], year = [ ${year} ], month = [ ${month} ]")
-        canvas.drawText(String.format(mMonthTitleFormat, year, month), mContentWidth / 2f, startY + mSideWidth / 2f - mTextOffset, mMPaint)
+        canvas.drawText(String.format(mMonthTitleFormat, year, month + 1), mContentWidth / 2f, startY + mSideWidth / 2f - mTextOffset, mMPaint)
         return mSideWidth
     }
 
@@ -287,17 +292,15 @@ class DatePickerView : View {
     private fun drawDays(startY: Float, canvas: Canvas,
                          firstDayWeek: Int,
                          daysOfMonth: Int) {
-
-
         var drawX = firstDayWeek * mSideWidth + mSideWidth / 2f
         var drawY = startY + mSideWidth / 2f - mTextOffset
 
-        var paint = mNPaint
+        var paint: Paint
 
         for (i in 0 until daysOfMonth) {
             if ((i + firstDayWeek) % 7 == 0 && i != 0) {
                 drawX = mSideWidth / 2f
-                drawY += mSideWidth
+                drawY += mSideWidth + mDividerHeight
             }
 
             if ((i + firstDayWeek) % 7 == 0 || (i + firstDayWeek) % 7 == 6) {
@@ -308,7 +311,7 @@ class DatePickerView : View {
 
             canvas.drawText((i + 1).toString(), drawX, drawY, paint)
 
-            drawX += mSideWidth + mDividerHeight
+            drawX += mSideWidth
         }
 
     }
@@ -321,7 +324,7 @@ class DatePickerView : View {
 
     private fun drawWeek(canvas: Canvas): Float {
         var drawX = paddingLeft + mSideWidth / 2f
-        val drawY = paddingTop + mSideWidth / 2f - (mNPaint.ascent() + mNPaint.descent()) / 2f
+        val drawY = paddingTop + mSideWidth / 2f - mTextOffset
 
 
         for (i in 0..6) {

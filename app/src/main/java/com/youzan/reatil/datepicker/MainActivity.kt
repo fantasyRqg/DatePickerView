@@ -13,6 +13,6 @@ class MainActivity : Activity() {
         val calendar = Calendar.getInstance(Locale.getDefault())
         date_picker.setDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH))
         date_picker.setDate(2018, 5)
-        date_picker.setLineMargin(0)
+        date_picker.setLineMargin(10)
     }
 }
