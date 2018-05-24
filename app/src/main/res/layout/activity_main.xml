@@ -10,10 +10,15 @@
         android:id="@+id/date_picker"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:lineMargin="2dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        app:cornerRadius="3dp"
+        app:dividerColor="#CCCCCC"
         app:dividerHeight="0.5dp"
-        app:dividerColor="@color/colorAccent"
-        app:highlightColor="@color/colorPrimary"
-        app:textSize="13sp" />
+        app:highlightColor="#0983F6"
+        app:lineMargin="2dp"
+        app:rangeColor="#3C0983F6"
+        app:selectMode="range"
+        app:textSize="14sp" />
 
 </FrameLayout>

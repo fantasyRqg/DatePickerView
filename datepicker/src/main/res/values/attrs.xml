@@ -10,6 +10,12 @@
         <attr name="textSize" format="dimension" />
         <attr name="lineMargin" format="dimension" />
         <attr name="dividerHeight" format="dimension" />
+        <attr name="cornerRadius" format="dimension" />
+
+        <attr name="selectMode" format="enum">
+            <enum name="single" value="0" />
+            <enum name="range" value="1" />
+        </attr>
 
     </declare-styleable>
 </resources>
