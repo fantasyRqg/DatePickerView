@@ -1,9 +1,9 @@
-package com.youzan.reatil.datepicker
+package com.rqg.reatil.datepicker
 
 import android.app.Activity
 import android.os.Bundle
 import android.util.Log
-import com.youzan.retail.datepiker.DatePickCallback
+import com.rqg.github.datepiker.DatePickCallback
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 

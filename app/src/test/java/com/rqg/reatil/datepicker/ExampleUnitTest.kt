@@ -1,4 +1,4 @@
-package com.youzan.reatil.datepicker
+package com.rqg.reatil.datepicker
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

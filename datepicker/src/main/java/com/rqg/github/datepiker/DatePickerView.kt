@@ -1,4 +1,4 @@
-package com.youzan.retail.datepiker
+package com.rqg.github.datepiker
 
 import android.annotation.SuppressLint
 import android.content.Context
